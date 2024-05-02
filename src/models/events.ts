@@ -1,6 +1,13 @@
 import mongoose from "mongoose";
 import { recurringPattern } from "../utils/globals";
 
+export interface IEvent extends mongoose.Document {
+  title: string;
+  date: Date;
+  recurring: boolean;
+  recurringType?: string;
+}
+
 const eventSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -20,6 +27,6 @@ const eventSchema = new mongoose.Schema({
   },
 });
 
-const EventModel = mongoose.model("Event", eventSchema);
+const Event = mongoose.model("Event", eventSchema);
 
-export default EventModel;
+export default Event;
