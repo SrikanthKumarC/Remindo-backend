@@ -38,3 +38,9 @@ export const validateEvent = async (data: any) => {
   }
   return data;
 }
+
+export const userTierRates = {
+  free: 1,
+  premium: 10,
+  admin: 10000
+};
