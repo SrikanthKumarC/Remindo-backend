@@ -1,8 +1,8 @@
 # Intro
 
-This is a project I wanted to build from a long time, also using best practices. Test driven development is kind of new to me, so to explore that and see how it helps improve the developer experience, this is my shot at it.
+This is a project I've been wanting to build for a long time, and I'm keen to use best practices throughout. Test-driven development is relatively new to me, so I see this as an opportunity to explore it and see how it can improve the development process.
 
-This project is mainly a reminder app that anyone can use to remind themselves about important events in their life. While you can just use a reminder app, I found that is not reliable. I often change phones, laptops etc. Hence a robust system that can remind you in whatever device you are using is really important. 
+The project is a reminder app designed to help people keep track of important events in their lives. While there are plenty of reminder apps out there, I've found them unreliable, especially since I frequently switch between phones, laptops, and other devices. I need a robust system that can send reminders regardless of which device I'm using at the time.
 
-You can use this to remind yourself of a friends birthday, for example. Or you can use this to remind your self to kill an EC2 instance to save costs. Whatever.
+You could use this app to remind yourself of a friend's birthday or to remember to shut down an EC2 instance to save costs. Essentially, it's a versatile tool for any kind of reminder you might need.
 

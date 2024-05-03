@@ -10,12 +10,18 @@ import userRoutes from "./routes/user";
 import eventRoutes from "./routes/event";
 import refreshTokenRoutes from "./routes/refresh";
 
+import { rateLimit } from 'express-rate-limit'
+
 require('dotenv').config()
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+app.use(rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+}));
 
 app.get("/", (req, res) => {
   res.send("Hello World");
