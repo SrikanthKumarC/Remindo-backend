@@ -1,10 +1,13 @@
 import { Request, Response } from 'express';
 import User from '../models/user';
+import Token from '../models/token';
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import userService from '../services/user.service';
 import { validateUser } from '../utils/globals';
 import jwt from 'jsonwebtoken';
 require('dotenv').config();
+
 
 const signupController = async (req: Request, res: Response) => {
     try {
@@ -69,5 +72,76 @@ const logoutController = async (req: Request, res: Response) => {
     }
 }
 
+const resetPasswordController = async (req: Request, res: Response) => {
+    try {
+        const { email, password, newPassword } = req.body;
+        await validateUser({ email, password });
+        await validateUser({ email, newPassword });
+        const findUser = await User.findOne({ email });
+        if (!findUser) {
+            throw new Error("User not found");
+        }
+        const isMatch = await bcrypt.compare(password, findUser.password);
+        if (!isMatch) {
+            throw new Error("Invalid credentials");
+        }
+        const hashPassword = await bcrypt.hash(newPassword, 10);
+        findUser.password = hashPassword;
+        await findUser.save();
+        res.status(200).send("Password updated");
+    } catch (error: any) {
+        res.status(400).send(error.message);
+    }
+}
 
-export default { signupController, signInController, logoutController };
+
+const requestPasswordResetController = async (req: Request, res: Response) => {
+    try {
+        const { email } = req.body;
+        const findUser = await User.findOne({ email });
+        if (!findUser) {
+            throw new Error("User not found");
+        }
+        const token = await Token.findOne({ userId: findUser._id });
+        if (token) {
+            token.deleteOne();
+        }
+        const newToken = crypto.randomBytes(32).toString('hex');
+        const hashToken = await bcrypt.hash(newToken, 10);
+        await Token.create({ token: hashToken, userId: findUser._id });
+        res.status(200).send("Token sent to email");
+    }
+    catch (error: any) {
+        res.send(400).send(error.message);
+    }
+}
+
+const resetPasswordTokenController = async (req: Request, res: Response) => {
+    try {
+        const { userId, token, password } = req.body;
+        const tokenUser = await Token.findOne({ userId });
+        if (!tokenUser) {
+            throw new Error("Invalid token");
+        }
+        const isValidToken = await bcrypt.compare(token, tokenUser.token);
+        if (!isValidToken) {
+            throw new Error("Invalid token");
+        }
+        const findUser = await User.findById(userId);
+        if (!findUser) {
+            throw new Error("User not found");
+        }
+        const hash = await bcrypt.hash(password, 10);
+        findUser.password = hash;
+        await findUser.save();
+        res.status(200).send("Password updated");
+    } catch (error: any) {
+        res.status(400).send(error.message);
+    }
+}
+
+
+        
+
+
+export default { signupController, signInController, logoutController, resetPasswordController, requestPasswordResetController, resetPasswordTokenController};

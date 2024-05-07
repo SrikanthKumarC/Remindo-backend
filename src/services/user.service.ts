@@ -17,4 +17,6 @@ const createUser = async (data: IUser) => {
 
 
 
+
+
 export default { createUser };
