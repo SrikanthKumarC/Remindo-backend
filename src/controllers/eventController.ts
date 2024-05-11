@@ -29,7 +29,7 @@ const createEvent = async (req: any, res: Response) => {
 }
 
 
-const listEvents = async (req: Request, res: Response) => {
+const listEvents = async (req: any, res: Response) => {
     const email = req.user;
     const user = await User.findOne({ email });
     if (!user) {
