@@ -39,8 +39,25 @@ export const validateEvent = async (data: any) => {
   return data;
 }
 
+export const notifyByEmail = async (data: any) => {
+  const schema = object({
+    email: string([emailObj('Enter a valid email!')]),
+    message: string()
+  });
+
+  try {
+    parse(schema, data);
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+  return data;
+};
+
 export const userTierRates = {
   free: 1,
   premium: 10,
   admin: 10000
 };
+
+
+

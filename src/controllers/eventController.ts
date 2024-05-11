@@ -29,4 +29,34 @@ const createEvent = async (req: any, res: Response) => {
 }
 
 
-export default { createEvent };
+const listEvents = async (req: Request, res: Response) => {
+    const email = req.user;
+    const user = await User.findOne({ email });
+    if (!user) {
+        return res.status(404).send("User not found");
+    }
+    try {
+        const events = await Event.find({ createdBy: user._id });
+        res.status(200).send(events);
+    }
+    catch (error: any) {
+        res.status(400).send(error.message);
+    }
+}
+
+const deleteEvent = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+        const event = await Event.findById(id);
+        if (!event) {
+            return res.status(404).send("Event not found");
+        }
+        await event.deleteOne();
+        res.status(200).send("Event deleted");
+    }
+    catch (error: any) {
+        res.status(400).send(error.message);
+    }
+}
+
+export default { createEvent, listEvents, deleteEvent };

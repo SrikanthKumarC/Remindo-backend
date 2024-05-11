@@ -1,6 +1,7 @@
 import app from "../src/app";
 import request from "supertest";
 import mongoose from "mongoose";
+require("dotenv").config();
 
 beforeAll(async () => {
   await mongoose.connect(process.env.DB_URI || "");

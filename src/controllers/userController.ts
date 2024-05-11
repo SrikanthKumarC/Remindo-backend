@@ -16,6 +16,7 @@ const signupController = async (req: Request, res: Response) => {
         res.status(201).send(newUser);
     }
     catch (error: any) {
+        console.log(error)
         if (error.name == "MongoServerError" && error.code === 11000) {
             res.status(400).send("Email already exists");
         } else {

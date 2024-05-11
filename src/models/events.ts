@@ -29,6 +29,10 @@ const eventSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  executed: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Event = mongoose.model("Event", eventSchema);
