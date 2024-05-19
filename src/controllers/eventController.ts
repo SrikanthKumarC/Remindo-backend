@@ -8,6 +8,7 @@ import User, { IUser } from '../models/user';
 const createEvent = async (req: any, res: Response) => {
     try {
         const findUser = await User.findOne({ email: req.user }) as IUser;
+        req.body.date = new Date(req.body.date).toUTCString();
         if (!findUser) {
             return res.status(403).send("Unauthorized");
         }
