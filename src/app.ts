@@ -11,6 +11,7 @@ import userRoutes from "./routes/user";
 import eventRoutes from "./routes/event";
 import refreshTokenRoutes from "./routes/refresh";
 import notificationRoutes from "./routes/notification";
+import logRoutes from "./routes/logging";
 
 import { startMetricsServer } from "./utils/metrics";
 import responseTime from "response-time";
@@ -31,7 +32,7 @@ app.use(rateLimit({
 
 app.use(responseTime((req: Request, res: Response, time) => {
   console.log(`Request time for ${req.url}: ${time}`);
-  if (req?.route?.path){ 
+  if (req?.route?.path) {
     responseTimeHistogram.observe({ method: req.method, route: req.route.path, code: res.statusCode }, time * 1000);
   }
 }));
@@ -43,6 +44,7 @@ app.get("/", (req, res) => {
 app.use("/api", userRoutes);
 app.use("/api/event", eventRoutes);
 app.use("/api", refreshTokenRoutes);
+app.use("/", logRoutes);
 
 app.use('/api/notify/', notificationRoutes);
 
