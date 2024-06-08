@@ -7,6 +7,19 @@ export enum recurringPattern {
   YEARLY = "YEARLY",
 }
 
+// credits per user tier
+const UserTiers = {
+  free: { credits: 2 },
+  plus: { credits: 3 },
+  premium: { credits: 10 }
+} as const;
+
+type UserTier = keyof typeof UserTiers;
+
+export function getCredits(tier: UserTier): number {
+  return UserTiers[tier].credits;
+}
+// end of credits per user tier
 
 export const validateUser = async (data: any) => {
   const schema = object({
@@ -58,6 +71,4 @@ export const userTierRates = {
   premium: 10,
   admin: 10000
 };
-
-
 

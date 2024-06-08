@@ -7,17 +7,28 @@ import User, { IUser } from '../models/user';
 
 const createEvent = async (req: any, res: Response) => {
     try {
-        const findUser = await User.findOne({ email: req.user }) as IUser;
+        const userId = req.params.userId;
+        if (!userId) {
+            return res.status(403).send("Unauthorized: userId not found in request.");
+        }
+        console.log("debug in createEvent userid:", userId);
+        let findUser = await User.findOne({ _id: userId });
+        if (!findUser) {
+            const user = new User({ _id: userId });
+            user.email = req.user.emailAddresses[0].emailAddress;
+            const mainUser = await user.save();
+            findUser = mainUser;
+        }
         req.body.date = new Date(req.body.date).toUTCString();
         if (!findUser) {
             return res.status(403).send("Unauthorized");
         }
-        if (findUser?.availabeEvents <= 0) {
+        if (findUser?.availableEvents <= 0) {
             return res.status(402).send("You have reached your event limit, either upgrade your account or delete an event to create a new one.");
         }
         const eventData = await validateEvent(req.body);
-        eventData.createdBy = findUser._id as ObjectId;
-        findUser.availabeEvents = findUser.availabeEvents - 1;
+        eventData.createdBy = findUser._id as any;
+        findUser.availableEvents = findUser.availableEvents - 1;
         const newEvent = await Event.create(eventData);
         await newEvent.save();
         await findUser.save();
@@ -31,8 +42,9 @@ const createEvent = async (req: any, res: Response) => {
 
 
 const listEvents = async (req: any, res: Response) => {
-    const email = req.user;
-    const user = await User.findOne({ email });
+    const userId = req.params.userId;
+    console.log(userId)
+    const user = await User.findOne({ _id: userId });
     if (!user) {
         return res.status(404).send("User not found");
     }
