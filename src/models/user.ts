@@ -8,20 +8,20 @@ export interface IUser extends mongoose.Document{
   userTier?: string;
   subscription?: string;
   subscriptionDate?: Date;
-  availabeEvents: number;
+  availableEvents: number;
 }
 // create a mongo model
 
 const userSchema = new mongoose.Schema(
   {
+    _id: {
+      type: String,
+      unique: true,
+    },
     email: {
       type: String,
       required: true,
       unique: true,
-    },
-    password: {
-      type: String,
-      required: true,
     },
     phoneNumber: {
       type: String,
@@ -42,9 +42,9 @@ const userSchema = new mongoose.Schema(
     subscriptionDate: {
       type: Date,
     },
-    availabeEvents: {
+    availableEvents: {
       type: Number,
-      default: 1,
+      default: 2,
     },
   },
   { timestamps: true },

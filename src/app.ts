@@ -5,6 +5,7 @@ const app = express();
 import db from "./config/db";
 import mongoose from "mongoose";
 
+import cors from "cors"
 import cookieParser from "cookie-parser";
 
 import userRoutes from "./routes/user";
@@ -19,8 +20,19 @@ import { responseTimeHistogram, dbQueryDurationHistogram } from "./utils/metrics
 
 import { rateLimit } from 'express-rate-limit'
 
-require('dotenv').config();
+import { ClerkExpressWithAuth } from "@clerk/clerk-sdk-node";
 
+
+require('dotenv').config();
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "*");
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept"
+//   );
+//   next();
+// });
+app.use(cors({credentials: true, origin: true}))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -29,6 +41,8 @@ app.use(rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100 // limit each IP to 100 requests per windowMs
 }));
+
+
 
 app.use(responseTime((req: Request, res: Response, time) => {
   console.log(`Request time for ${req.url}: ${time}`);
@@ -40,6 +54,9 @@ app.use(responseTime((req: Request, res: Response, time) => {
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
+
+app.use(ClerkExpressWithAuth());
+
 
 app.use("/api", userRoutes);
 app.use("/api/event", eventRoutes);
@@ -53,8 +70,8 @@ if (process.env.NODE_ENV !== "test") {
   mongoose.connection.once("open", async () => {
     console.warn(process.env.DB_URI);
     console.warn("Connected to the database");
-    await app.listen(3000, () => {
-      console.log("App listening on port 3000");
+    await app.listen(3024, () => {
+      console.log("App listening on port 3024");
     });
   });
   startMetricsServer();

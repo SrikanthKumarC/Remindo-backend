@@ -25,9 +25,13 @@ const eventSchema = new mongoose.Schema({
     type: String,
     enum: recurringPattern,
   },
+  channels: {
+    type: [String],
+    required: true,
+  },
   createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    type: String,
+    required: true,
   },
   executed: {
     type: Boolean,
