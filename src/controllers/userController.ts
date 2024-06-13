@@ -1,5 +1,5 @@
-// import { Request, Response } from 'express';
-// import User from '../models/user';
+import { Request, Response } from 'express';
+import User from '../models/user';
 // import Token from '../models/token';
 // import bcrypt from 'bcrypt';
 // import crypto from 'crypto';
@@ -9,6 +9,21 @@
 // require('dotenv').config();
 
 
+const getUserDetails = async (req: Request, res: Response) => {
+    try {
+        const userId = req.params.userId;
+        if (!userId) {
+            return res.status(403).send("Unauthorized: userId not found in request.");
+        }
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+        res.status(200).send(user);
+    } catch (error: any) {
+        res.status(400).send(error.message);
+    }
+}
 // const signupController = async (req: Request, res: Response) => {
 //     try {
 //         const user = await userService.createUser(req.body);
@@ -146,3 +161,5 @@
 
 
 // export default { signupController, signInController, logoutController, resetPasswordController, requestPasswordResetController, resetPasswordTokenController};
+
+export default { getUserDetails };

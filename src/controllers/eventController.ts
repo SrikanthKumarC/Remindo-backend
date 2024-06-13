@@ -12,7 +12,7 @@ const createEvent = async (req: any, res: Response) => {
             return res.status(403).send("Unauthorized: userId not found in request.");
         }
         console.log("debug in createEvent userid:", userId);
-        let findUser = await User.findOne({ _id: userId });
+        let findUser = await User.findById(userId);
         if (!findUser) {
             const user = new User({ _id: userId });
             user.email = req.user.emailAddresses[0].emailAddress;
@@ -25,6 +25,10 @@ const createEvent = async (req: any, res: Response) => {
         }
         if (findUser?.availableEvents <= 0) {
             return res.status(402).send("You have reached your event limit, either upgrade your account or delete an event to create a new one.");
+        }
+        console.log(req.body)
+        if (req.body.recurringType && req.body.recurringType === "") {
+            req.body.recurringType = null;
         }
         const eventData = await validateEvent(req.body);
         eventData.createdBy = findUser._id as any;
@@ -59,12 +63,22 @@ const listEvents = async (req: any, res: Response) => {
 
 const deleteEvent = async (req: Request, res: Response) => {
     const { id } = req.params;
+    const { userId } = req.query;
+    if (!id || !userId) {
+        return res.status(400).send("Event ID or User ID not found in request");
+    }
     try {
         const event = await Event.findById(id);
         if (!event) {
             return res.status(404).send("Event not found");
         }
         await event.deleteOne();
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+        user.availableEvents = user.availableEvents + 1;
+        await user.save();
         res.status(200).send("Event deleted");
     }
     catch (error: any) {

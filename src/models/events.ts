@@ -29,6 +29,9 @@ const eventSchema = new mongoose.Schema({
     type: [String],
     required: true,
   },
+  webhook: {
+    type: String
+  },
   createdBy: {
     type: String,
     required: true,
