@@ -1,5 +1,5 @@
 import express from "express";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import bodyParser from "body-parser";
 const app = express();
 import db from "./config/db";
@@ -32,7 +32,7 @@ require('dotenv').config();
 //   );
 //   next();
 // });
-app.use(cors({credentials: true, origin: true}))
+app.use(cors({ credentials: true, origin: true }))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -55,7 +55,15 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
-app.use(ClerkExpressWithAuth());
+const bypassAuth = (req: Request, res: Response, next: NextFunction) => {
+  if (req.headers['x-lambda-bypass'] === process.env.LAMBDA_BYPASS_SECRET) {
+    return next();  
+  }
+  return ClerkExpressWithAuth()(req, res, next);
+};
+
+app.use(bypassAuth);
+
 
 
 app.use("/api", userRoutes);
