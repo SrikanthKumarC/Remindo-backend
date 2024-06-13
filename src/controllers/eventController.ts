@@ -77,7 +77,9 @@ const deleteEvent = async (req: Request, res: Response) => {
         if (!user) {
             return res.status(404).send("User not found");
         }
-        user.availableEvents = user.availableEvents + 1;
+        if (!event.executed) {
+            user.availableEvents = user.availableEvents + 1;
+        }
         await user.save();
         res.status(200).send("Event deleted");
     }
