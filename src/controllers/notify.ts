@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import Event from '../models/events';
-import { startOfDay, endOfDay, formatISO, parseISO } from 'date-fns';
+import { startOfHour, endOfHour, formatISO, parseISO } from 'date-fns';
 
 const listDueNotifications = async (req: Request, res: Response) => {
     try {
@@ -15,15 +15,15 @@ const listDueNotifications = async (req: Request, res: Response) => {
 const todaysNotifications = async (req: Request, res: Response) => {
     try {
         const now = new Date();
-        const todayStart = formatISO(startOfDay(now), { representation: 'complete' });
-        const todayEnd = formatISO(endOfDay(now), { representation: 'complete' });
+        const hourStart = formatISO(startOfHour(now), { representation: 'complete' });
+        const hourEnd = formatISO(endOfHour(now), { representation: 'complete' });
 
-        const end = endOfDay(now);
-        const todaysNotifications = await Event.find({
-            date: { $gte: parseISO(todayStart), $lt: parseISO(todayEnd) },
+        // find and get notifications in this hour
+        const hourlyNotifications = await Event.find({
+            date: { $gte: parseISO(hourStart), $lt: parseISO(hourEnd) },
             executed: false
         });
-        res.status(200).send(todaysNotifications);
+        res.status(200).send(hourlyNotifications);
     }
     catch (error: any) {
         res.status(400).send(error.message);
