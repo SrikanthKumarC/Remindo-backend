@@ -1,4 +1,4 @@
-import { email as emailObj, string, optional, parse, date, object, minLength, transform } from 'valibot';
+import { email as emailObj, string, boolean,optional, array, parse, date, object, minLength, transform } from 'valibot';
 
 export enum recurringPattern {
   DAILY = "DAILY",
@@ -40,8 +40,10 @@ export const validateEvent = async (data: any) => {
   const schema = object({
     title: string(),
     date: string(),
-    recurring: optional(string()),
-    recurringType: optional(string())
+    recurring: optional(boolean()),
+    recurringType: optional(string()),
+    webhook: optional(string()),
+    channels: optional(array(string())),
   });
 
   try {
