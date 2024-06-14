@@ -1,10 +1,13 @@
 require('dotenv').config();
+import { Request, Response, NextFunction } from 'express';
 import { clerkClient } from '@clerk/clerk-sdk-node';
 import User from '../models/user';
 
-const verifyJWT = async (req: any, res: any, next: any) => {
+const verifyJWT = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userId = req.params.userId;
+        console.log(req.params)
+        console.log(req.query)
         if (!userId) {
             return res.status(401).send("Unauthorized");
         }
@@ -15,7 +18,7 @@ const verifyJWT = async (req: any, res: any, next: any) => {
             user.email = clerkUser.emailAddresses[0].emailAddress;
             await user.save();
         }
-        req.user = user;
+        // req.user = user;
         next();
     } catch (error) {
         console.log(error);

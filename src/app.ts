@@ -57,6 +57,9 @@ const bypassAuth = (req: Request, res: Response, next: NextFunction) => {
   if (req.headers['x-lambda-bypass'] === process.env.LAMBDA_BYPASS_SECRET) {
     return next();  
   }
+  console.log("inside bypass auth")
+  console.log(req.params)
+  console.log(req.query)
   return ClerkExpressWithAuth()(req, res, next);
 };
 
