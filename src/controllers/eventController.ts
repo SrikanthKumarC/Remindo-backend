@@ -17,7 +17,6 @@ const createEvent = async (req: any, res: Response) => {
         if (!findUser) {
             return res.status(404).send("User not found");
         }
-        req.body.date = new Date(req.body.date).toISOString();
         if (findUser?.availableEvents <= 0) {
             return res.status(402).send("You have reached your event limit, either upgrade your account or delete an event to create a new one.");
         }

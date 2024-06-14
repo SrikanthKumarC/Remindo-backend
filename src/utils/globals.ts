@@ -73,4 +73,3 @@ export const userTierRates = {
   premium: 10,
   admin: 10000
 };
-
