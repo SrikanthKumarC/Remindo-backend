@@ -14,15 +14,9 @@ const createEvent = async (req: any, res: Response) => {
         console.log("debug in createEvent userid:", userId);
         let findUser = await User.findById(userId);
         if (!findUser) {
-            const user = new User({ _id: userId });
-            user.email = req.user.emailAddresses[0].emailAddress;
-            const mainUser = await user.save();
-            findUser = mainUser;
+            return res.status(404).send("User not found");
         }
         req.body.date = new Date(req.body.date).toUTCString();
-        if (!findUser) {
-            return res.status(403).send("Unauthorized");
-        }
         if (findUser?.availableEvents <= 0) {
             return res.status(402).send("You have reached your event limit, either upgrade your account or delete an event to create a new one.");
         }
