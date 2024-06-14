@@ -20,7 +20,7 @@ import { responseTimeHistogram, dbQueryDurationHistogram } from "./utils/metrics
 
 import { rateLimit } from 'express-rate-limit'
 
-import { ClerkExpressWithAuth } from "@clerk/clerk-sdk-node";
+import { ClerkExpressWithAuth, withAuth } from "@clerk/clerk-sdk-node";
 
 
 require('dotenv').config();
@@ -41,8 +41,6 @@ app.use(rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100 // limit each IP to 100 requests per windowMs
 }));
-
-
 
 app.use(responseTime((req: Request, res: Response, time) => {
   console.log(`Request time for ${req.url}: ${time}`);
